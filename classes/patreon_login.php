@@ -68,6 +68,11 @@ class Patreon_Login {
 				wp_set_auth_cookie( $user->ID );
 				do_action( 'wp_login', $user->user_login );
 
+				if( $firstLoginUrl = get_option( 'patreon-initial-login-url', '' ) ) {
+					wp_redirect( home_url( $firstLoginUrl ), '302' );
+					exit;
+				}
+
 			} else {
 				/* wordpress account creation failed #HANDLE_ERROR */
 			}
