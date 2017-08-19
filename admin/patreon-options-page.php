@@ -24,6 +24,7 @@ function patreon_plugin_register_settings() { // whitelist options
     register_setting( 'patreon-options', 'patreon-creator-id' );
     register_setting( 'patreon-options', 'patreon-paywall-img-url' );
     register_setting( 'patreon-options', 'patreon-rewrite-rules-flushed' );
+    register_setting( 'patreon-options', 'patreon-allow-matching-email-login' );
 }
 
 function patreon_plugin_setup(){
@@ -96,6 +97,11 @@ function patreon_plugin_setup_page(){
         <tr valign="top">
         <th scope="row">URL for image to show when user is not yet a patron (or not yet paying enough)</th>
         <td><input type="text" name="patreon-paywall-img-url" value="<?php echo esc_attr( get_option('patreon-paywall-img-url', '') ); ?>" class="large-text" /></td>
+        </tr>
+
+        <tr valign="top">
+        <th scope="row">Allow login via Patreon into existing wordpress accounts if email matches</th>
+        <td><input type="checkbox" name="patreon-allow-matching-email-login" value="1" <?php echo get_option('patreon-allow-matching-email-login', false) ? 'checked' : ''; ?> /></td>
         </tr>
 
     </table>

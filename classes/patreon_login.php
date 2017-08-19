@@ -74,11 +74,6 @@ class Patreon_Login {
 
 		} else {
 
-			/* log user into existing wordpress account with matching email address -- disabled */
-			// wp_set_current_user( $user->ID, $user->user_login );
-			// wp_set_auth_cookie( $user->ID );
-			// do_action( 'wp_login', $user->user_login );
-
 			/* update user meta data with patreon data */
 			update_user_meta($user->ID, 'patreon_refresh_token', $tokens['refresh_token']);
 			update_user_meta($user->ID, 'patreon_access_token', $tokens['access_token']);
@@ -87,9 +82,15 @@ class Patreon_Login {
 			update_user_meta($user->ID, 'user_firstname', $user_response['data']['attributes']['first_name']);
 			update_user_meta($user->ID, 'user_lastname', $user_response['data']['attributes']['last_name']);
 
-			wp_redirect( wp_login_url().'?patreon-msg=login_with_patreon', '301' );
-			exit;
-
+			/* log user into existing wordpress account with matching email address -- potentially dangerous! */
+			if (get_option('patreon-allow-matching-email-login', false)) {
+				wp_set_current_user( $user->ID, $user->user_login );
+				wp_set_auth_cookie( $user->ID );
+				do_action( 'wp_login', $user->user_login );
+			} else {
+				wp_redirect(wp_login_url() . '?patreon-msg=login_with_patreon', '301');
+				exit;
+			}
 		}
 
 	}
