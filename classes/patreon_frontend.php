@@ -37,9 +37,9 @@ class Patreon_Frontend {
 		/* inline styles, for shame */
 		echo '
 		<style type="text/css">
-		.ptrn-button{display:block;margin-bottom:20px!important;}
-		.ptrn-button img {width: 272px; height:42px;}
-		.patreon-msg {-webkit-border-radius: 6px;-moz-border-radius: 6px;-ms-border-radius: 6px;-o-border-radius: 6px;border-radius: 6px;padding:8px;margin-bottom:20px!important;display:block;border:1px solid #E6461A;background-color:#484848;color:#ffffff;}
+		.ptrn-button { display:block;margin-bottom:20px!important;}
+		.ptrn-button img { width: 272px; height:42px;}
+		.patreon-msg { -webkit-border-radius: 6px;-moz-border-radius: 6px;-ms-border-radius: 6px;-o-border-radius: 6px;border-radius: 6px;padding:8px;margin-bottom:20px!important;display:block;border:1px solid #E6461A;background-color:#484848;color:#ffffff;}
 		</style>';
 
 		if(isset($_REQUEST['patreon-msg']) && $_REQUEST['patreon-msg'] == 'login_with_patreon') {
