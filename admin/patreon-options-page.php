@@ -24,6 +24,7 @@ function patreon_plugin_register_settings() { // whitelist options
     register_setting( 'patreon-options', 'patreon-creator-id' );
     register_setting( 'patreon-options', 'patreon-paywall-img-url' );
     register_setting( 'patreon-options', 'patreon-rewrite-rules-flushed' );
+    register_setting( 'patreon-options', 'patreon-initial-login-url' );
 }
 
 function patreon_plugin_setup(){
@@ -96,6 +97,11 @@ function patreon_plugin_setup_page(){
         <tr valign="top">
         <th scope="row">URL for image to show when user is not yet a patron (or not yet paying enough)</th>
         <td><input type="text" name="patreon-paywall-img-url" value="<?php echo esc_attr( get_option('patreon-paywall-img-url', '') ); ?>" class="large-text" /></td>
+        </tr>
+
+        <tr valign="top">
+        <th scope="row">First login redirect URL</th>
+        <td><input type="text" name="patreon-initial-login-url" value="<?php echo esc_attr( get_option('patreon-initial-login-url', '') ); ?>" class="large-text" /></td>
         </tr>
 
     </table>

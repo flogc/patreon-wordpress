@@ -67,7 +67,12 @@ class Patreon_Login {
 				update_user_meta($user_id, 'user_firstname', $user_response['data']['attributes']['first_name']);
 				update_user_meta($user_id, 'user_lastname', $user_response['data']['attributes']['last_name']);
 				update_user_meta($user_id, 'patreon_token_minted', microtime());
-				
+
+				if( $firstLoginUrl = get_option( 'patreon-initial-login-url', '' ) ) {
+					wp_redirect( home_url( $firstLoginUrl ), '302' );
+					exit;
+				}
+
 			} else {
 				/* wordpress account creation failed #HANDLE_ERROR */
 			}
