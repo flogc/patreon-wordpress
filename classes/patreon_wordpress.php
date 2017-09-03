@@ -60,19 +60,26 @@ class Patreon_Wordpress {
 		}
 
 		/* query Patreon API to get users patreon details */
-		$user_reponse = self::getPatreonUser($user);
-		if($user_reponse == false) {
+		$user_response = self::getPatreonUser($user);
+		if($user_response == false) {
 			return false;
 		}
 
 		/* all the details you want to update on wordpress user account */
-		update_user_meta($user->ID, 'patreon_user', $user_reponse['data']['attributes']['vanity']);
-		update_user_meta($user->ID, 'patreon_created', $user_reponse['data']['attributes']['created']);
-		update_user_meta($user->ID, 'user_firstname', $user_reponse['data']['attributes']['first_name']);
-		update_user_meta($user->ID, 'user_lastname', $user_reponse['data']['attributes']['last_name']);
+		update_user_meta($user->ID, 'patreon_user', $user_response['data']['attributes']['vanity']);
+		update_user_meta($user->ID, 'patreon_created', $user_response['data']['attributes']['created']);
+		update_user_meta($user->ID, 'user_firstname', $user_response['data']['attributes']['first_name']);
+		update_user_meta($user->ID, 'user_lastname', $user_response['data']['attributes']['last_name']);
+
+		// add patreon_user_id if not already set
+		// this should not be overwritten, otherwise account theft may be possible with matching email
+		$meta = get_user_meta( $user->ID );
+		if( !isset( $meta[ 'patreon_user_id' ] ) || !$meta[ 'patreon_user_id' ][ 0 ] ) {
+			update_user_meta( $user->ID, 'patreon_user_id', (int)$user_response['data']['id'] );
+		}
 
 		/* give other plugins the chance to use patreon data */
-		do_action( 'patreon_user_data', $user_reponse );
+		do_action( 'patreon_user_data', $user_response );
 	}
 
 	public static function getPatreonCreatorID() {
