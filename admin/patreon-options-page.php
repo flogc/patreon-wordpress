@@ -25,7 +25,6 @@ function patreon_plugin_register_settings() { // whitelist options
     register_setting( 'patreon-options', 'patreon-paywall-img-url' );
     register_setting( 'patreon-options', 'patreon-rewrite-rules-flushed' );
     register_setting( 'patreon-options', 'patreon-initial-login-url' );
-    register_setting( 'patreon-options', 'patreon-allow-matching-email-login' );
 }
 
 function patreon_plugin_setup(){
@@ -103,11 +102,6 @@ function patreon_plugin_setup_page(){
         <tr valign="top">
         <th scope="row">First login redirect URL</th>
         <td><input type="text" name="patreon-initial-login-url" value="<?php echo esc_attr( get_option('patreon-initial-login-url', '') ); ?>" class="large-text" /></td>
-        </tr>
-
-        <tr valign="top">
-        <th scope="row">Allow login via Patreon into existing wordpress accounts if email matches</th>
-        <td><input type="checkbox" name="patreon-allow-matching-email-login" value="1" <?php echo get_option('patreon-allow-matching-email-login', false) ? 'checked' : ''; ?> /></td>
         </tr>
 
     </table>

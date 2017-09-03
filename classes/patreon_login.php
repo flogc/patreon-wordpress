@@ -23,7 +23,7 @@ class Patreon_Login {
 		$email = $user_response['data']['attributes']['email'];
 
 		$name = strtolower(str_replace(' ', '', $user_response['data']['attributes']['first_name'].'_'.$user_response['data']['attributes']['last_name']));
-		
+
 		if(validate_username($name) && username_exists($name) == false) {
 			$username = sanitize_user( $name, true );
 		} else {
@@ -43,9 +43,19 @@ class Patreon_Login {
 
 		}
 
-		$user = get_user_by( 'email', $email );
+		// get user by patreon user id
+		if( !$userById = reset(get_users(array(
+			'meta_key' => 'patreon_user_id',
+			'meta_value' => (int)$user_response['data']['id'],
+			/* get newest user; “fix” for multiple users with identical patreon_user_id, because of old email matching */
+			'orderby' => 'user_id',
+			'order' => 'DESC',
+		)))) {
+			/* otherwise by email; this is only for new accounts; user will have to login manually to his/her WP account */
+			$userByEmail = get_user_by('email', $email);
+		}
 
-		if($user == false) {
+		if(!$userById && !$userByEmail) {
 
 			/* create wordpress user if no account exists with provided email address */
 			$random_password = wp_generate_password( 12, false );
@@ -79,7 +89,10 @@ class Patreon_Login {
 
 		} else {
 
+			$user = $userById ? $userById : $userByEmail;
+
 			/* update user meta data with patreon data */
+			/* TODO: only do this, if matched by patreon_user_id XOR there is not patreon_user_id already set */
 			update_user_meta($user->ID, 'patreon_refresh_token', $tokens['refresh_token']);
 			update_user_meta($user->ID, 'patreon_access_token', $tokens['access_token']);
 			update_user_meta($user->ID, 'patreon_user', $user_response['data']['attributes']['vanity']);
@@ -87,12 +100,16 @@ class Patreon_Login {
 			update_user_meta($user->ID, 'user_firstname', $user_response['data']['attributes']['first_name']);
 			update_user_meta($user->ID, 'user_lastname', $user_response['data']['attributes']['last_name']);
 
-			/* log user into existing wordpress account with matching email address -- potentially dangerous! */
-			if (get_option('patreon-allow-matching-email-login', false)) {
+			if( $userById
+				// prevent direct patreon login to admin-users
+				&& !user_can($userById, 'administrator') ) {
+
+				/* log user into existing wordpress account by matching patreon user id */
 				wp_set_current_user( $user->ID, $user->user_login );
 				wp_set_auth_cookie( $user->ID );
 				do_action( 'wp_login', $user->user_login );
 			} else {
+				/* user has to login to wordpress manually */
 				wp_redirect(wp_login_url() . '?patreon-msg=login_with_patreon', '301');
 				exit;
 			}
